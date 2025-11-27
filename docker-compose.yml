@@ -2,7 +2,9 @@ version: '3.8'
 
 services:
   chaussup-web:
+    build: .
     image: chaussup-web:0.1.0
+    container_name: chaussup-web
     ports:
       - "5000:5000"
     environment:
