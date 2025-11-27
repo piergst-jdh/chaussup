@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Login - Chauss'Up{% endblock %}
+
+{% block content %}
+<section class="login-section">
+    <div class="login-box">
+        <h2>🔒 Connexion Admin</h2>
+        {% if error %}
+        <div class="error">{{ error }}</div>
+        {% endif %}
+        <form method="POST">
+            <div class="form-group">
+                <label for="username">Nom d'utilisateur</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Mot de passe</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn-primary">Se connecter</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

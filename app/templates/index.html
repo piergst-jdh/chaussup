@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero">
+    <h2>Osez le dépareillé, choisissez la durabilité !</h2>
+</section>
+
+<section class="products">
+    <h3>Nos Produits</h3>
+    <div class="product-grid">
+        {% for product in products %}
+        <div class="product-card">
+            <img src="{{ product.image_url }}" alt="{{ product.name }}">
+            <h4>{{ product.name }}</h4>
+            <p class="description">{{ product.description }}</p>
+            <p class="price">{{ "%.2f"|format(product.price) }} €</p>
+            <button class="add-to-cart" onclick="addToCart({{ product.to_dict()|tojson }})">
+                Ajouter au panier
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

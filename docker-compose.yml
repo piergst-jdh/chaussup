@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  chaussup-db:
+    image: postgres:17-alpine
+    container_name: chaussup-db
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - chaussup_data:/var/lib/postgresql/data
+    networks:
+      - chaussup_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d chaussup"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  chaussup-web:
+    build: .
+    image: chaussup-web:0.1.0
+    container_name: chaussup-web
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=${FLASK_ENV}
+      - SECRET_KEY=${SECRET_KEY}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=chaussup-db
+      - DB_NAME=${DB_NAME}
+    depends_on:
+      chaussup-db:
+        condition: service_healthy
+    networks:
+      - chaussup_network
+    volumes:
+      - ./app:/app
+
+volumes:
+  chaussup_data:
+     name: chaussup_data
+
+networks:
+  chaussup_network:
+    name: chaussup_network
+    #internal: true

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Chauss'Up - Des chaussettes durables{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🧦 Chauss'Up</h1>
+            <p class="tagline">La marketplace de chaussettes éco-responsables</p>
+            <nav>
+                <a href="{{ url_for('index') }}">Accueil</a>
+                {% if session.get('admin_logged_in') %}
+                    <a href="{{ url_for('admin_dashboard') }}">Admin</a>
+                    <a href="{{ url_for('logout') }}">Déconnexion</a>
+                {% endif %}
+                <button id="cart-btn" onclick="toggleCart()">🛒 Panier (<span id="cart-count">0</span>)</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <div id="cart-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="toggleCart()">&times;</span>
+            <h2>Votre Panier</h2>
+            <div id="cart-items"></div>
+            <div class="cart-total">
+                <strong>Total: <span id="cart-total">0.00</span> €</strong>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>🌱 Économie circulaire | 🔒 Sécurité by design | 📍 Paris</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='cart.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
