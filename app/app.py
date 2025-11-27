@@ -4,27 +4,37 @@ import os
 from routes import init_routes
 
 
+def get_secret_or_env(secret_name, env_name=None, default=None):
+    """Read from Docker secret first, then env var, then default"""
+    secret_path = f"/run/secrets/{secret_name}"
+    if os.path.exists(secret_path):
+        with open(secret_path, "r") as f:
+            return f.read().strip()
+    # Fallback to env var (for local dev)
+    if env_name:
+        return os.environ.get(env_name, default)
+    return default
+
+
 def create_app():
     app = Flask(__name__)
 
-    # Secret key for sessions
-    app.config["SECRET_KEY"] = os.environ.get(
-        "SECRET_KEY", "dev-secret-key-change-in-prod"
+    # Read secret key
+    app.config["SECRET_KEY"] = get_secret_or_env(
+        "secret_key", "SECRET_KEY", "dev-secret-key"
     )
 
-    # Azure PostgreSQL configuration
-    db_user = os.environ.get("DB_USER", "your_admin_user")
-    db_password = os.environ.get("DB_PASSWORD", "your_password")
-    db_host = os.environ.get("DB_HOST", "your-server.postgres.database.azure.com")
+    # Read database credentials
+    db_user = get_secret_or_env("db_user", "DB_USER", "admin")
+    db_password = get_secret_or_env("db_password", "DB_PASSWORD", "password")
+    db_host = os.environ.get("DB_HOST", "localhost")
     db_name = os.environ.get("DB_NAME", "chaussup")
 
     app.config["SQLALCHEMY_DATABASE_URI"] = (
-        # f"postgresql://{db_user}:{db_password}@{db_host}/{db_name}?sslmode=require"
-        f"postgresql://{db_user}:{db_password}@{db_host}/{db_name}?sslmode=disable"
+        f"postgresql://{db_user}:{db_password}@{db_host}/{db_name}?sslmode=required"
     )
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-    # Initialize database
     db.init_app(app)
 
     with app.app_context():
