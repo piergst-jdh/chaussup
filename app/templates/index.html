@@ -14,7 +14,7 @@
             <h4>{{ product.name }}</h4>
             <p class="description">{{ product.description }}</p>
             <p class="price">{{ "%.2f"|format(product.price) }} €</p>
-            <button class="add-to-cart" onclick="addToCart({{ product.to_dict()|tojson }})">
+            <button class="add-to-cart" onclick='addToCart({{ product.to_dict()|tojson }})'>
                 Ajouter au panier
             </button>
         </div>

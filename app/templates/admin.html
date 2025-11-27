@@ -4,18 +4,6 @@
 
 {% block content %}
 <section class="admin-section">
-    <h2>Gestion des Produits</h2>
-    
-    <div class="admin-add">
-        <h3>Ajouter un produit</h3>
-        <form method="POST" action="{{ url_for('add_product') }}">
-            <input type="text" name="name" placeholder="Nom du produit" required>
-            <textarea name="description" placeholder="Description" required></textarea>
-            <input type="number" step="0.01" name="price" placeholder="Prix" required>
-            <input type="url" name="image_url" placeholder="URL de l'image" required>
-            <button type="submit" class="btn-primary">Ajouter</button>
-        </form>
-    </div>
 
     <div class="admin-products">
         <h3>Produits existants</h3>
@@ -37,7 +25,6 @@
                     <td>{{ product.description[:50] }}...</td>
                     <td>{{ "%.2f"|format(product.price) }} €</td>
                     <td>
-                        <button onclick="editProduct({{ product.to_dict()|tojson }})">Modifier</button>
                         <form method="POST" action="{{ url_for('delete_product', product_id=product.id) }}" style="display:inline;">
                             <button type="submit" onclick="return confirm('Supprimer ce produit ?')">Supprimer</button>
                         </form>
@@ -49,34 +36,4 @@
     </div>
 </section>
 
-<div id="edit-modal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeEditModal()">&times;</span>
-        <h2>Modifier le produit</h2>
-        <form id="edit-form" method="POST">
-            <input type="text" name="name" id="edit-name" required>
-            <textarea name="description" id="edit-description" required></textarea>
-            <input type="number" step="0.01" name="price" id="edit-price" required>
-            <input type="url" name="image_url" id="edit-image-url" required>
-            <button type="submit" class="btn-primary">Sauvegarder</button>
-        </form>
-    </div>
-</div>
-{% endblock %}
-
-{% block scripts %}
-<script>
-function editProduct(product) {
-    document.getElementById('edit-form').action = '/admin/product/edit/' + product.id;
-    document.getElementById('edit-name').value = product.name;
-    document.getElementById('edit-description').value = product.description;
-    document.getElementById('edit-price').value = product.price;
-    document.getElementById('edit-image-url').value = product.image_url;
-    document.getElementById('edit-modal').style.display = 'block';
-}
-
-function closeEditModal() {
-    document.getElementById('edit-modal').style.display = 'none';
-}
-</script>
 {% endblock %}

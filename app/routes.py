@@ -78,23 +78,6 @@ def init_routes(app):
         products = Product.query.all()
         return render_template("admin.html", products=products)
 
-    # Admin: Add product
-    @app.route("/admin/product/add", methods=["POST"])
-    @login_required
-    def add_product():
-        name = request.form.get("name")
-        description = request.form.get("description")
-        price = request.form.get("price")
-        image_url = request.form.get("image_url")
-
-        product = Product(
-            name=name, description=description, price=price, image_url=image_url
-        )
-        db.session.add(product)
-        db.session.commit()
-
-        return redirect(url_for("admin_dashboard"))
-
     # Admin: Delete product
     @app.route("/admin/product/delete/<int:product_id>", methods=["POST"])
     @login_required
@@ -105,17 +88,3 @@ def init_routes(app):
 
         return redirect(url_for("admin_dashboard"))
 
-    # Admin: Edit product
-    @app.route("/admin/product/edit/<int:product_id>", methods=["POST"])
-    @login_required
-    def edit_product(product_id):
-        product = Product.query.get_or_404(product_id)
-
-        product.name = request.form.get("name")
-        product.description = request.form.get("description")
-        product.price = request.form.get("price")
-        product.image_url = request.form.get("image_url")
-
-        db.session.commit()
-
-        return redirect(url_for("admin_dashboard"))
