@@ -31,7 +31,7 @@ def create_app():
     db_name = os.environ.get("DB_NAME", "chaussup")
 
     app.config["SQLALCHEMY_DATABASE_URI"] = (
-        f"postgresql://{db_user}:{db_password}@{db_host}/{db_name}?sslmode=required"
+        f"postgresql://{db_user}:{db_password}@{db_host}/{db_name}?sslmode=require"
     )
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
