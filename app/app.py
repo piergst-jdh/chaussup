@@ -13,7 +13,7 @@ def get_secret_or_env(secret_name, env_name=None):
             return f.read().strip()
     # Fallback to env var (for local dev)
     if env_name:
-        return os.environ.get(env_name, default)
+        return os.environ.get(env_name)
     return ""
 
 
@@ -21,7 +21,7 @@ def create_app():
     app = Flask(__name__)
 
     # Read secret key
-    app.config["SECRET_KEY"] = get_secret_or_env( "secret_key", "SECRET_KEY")
+    app.config["SECRET_KEY"] = get_secret_or_env("secret_key", "SECRET_KEY")
 
     # Read database credentials
     db_user = get_secret_or_env("db_user", "DB_USER")
