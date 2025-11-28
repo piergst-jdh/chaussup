@@ -16,8 +16,7 @@ jobs:
       
       - name: Build Docker image
         run: |
-          docker build -t chaussup-web:${{ github.sha }} .
-          docker tag chaussup-web:${{ github.sha }} chaussup-web:latest
+          docker build -t chaussup-web:latest .
       
       - name: Save Docker image
         run: |
@@ -29,8 +28,8 @@ jobs:
           host: ${{ secrets.AZURE_VM_HOST }}
           username: ${{ secrets.AZURE_VM_USER }}
           key: ${{ secrets.AZURE_VM_SSH_KEY }}
-          source: "chaussup-web.tar.gz"
-          target: "/home/${{ secrets.AZURE_VM_USER }}/"
+          source: "chaussup-web.tar.gz, docker-composer.yml"
+          target: "/home/${{ secrets.AZURE_VM_USER }}/chaussup"
       
       - name: Deploy on Azure VM
         uses: appleboy/ssh-action@v1.0.3
@@ -39,7 +38,7 @@ jobs:
           username: ${{ secrets.AZURE_VM_USER }}
           key: ${{ secrets.AZURE_VM_SSH_KEY }}
           script: |
-            cd /home/${{ secrets.AZURE_VM_USER }}
+            cd /home/${{ secrets.AZURE_VM_USER }}/chaussup
             
             # Load new image
             gunzip -c chaussup-web.tar.gz | sudo docker load
@@ -51,7 +50,7 @@ jobs:
             sleep 10
             
             # Deploy new version
-            sudo docker stack deploy -c chaussup/docker-compose.yml chaussup
+            sudo docker stack deploy -c docker-compose.yml chaussup
             
             # Cleanup
             rm chaussup-web.tar.gz
