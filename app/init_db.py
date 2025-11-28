@@ -1,35 +1,36 @@
 from models import db, User, Product
 from sqlalchemy.exc import IntegrityError, ProgrammingError
+from flask import current_app
 
 
 def initialize_database(username, password):
     """Drop and recreate all tables with demo data"""
     try:
-        print("Attempting to drop all tables...")
+        current_app.logger.debug("Attempting to drop all tables...")
         db.drop_all()
     except Exception as e:
-        print(f"Note: {e}")
+        current_app.logger.debug(f"Note: {e}")
 
     try:
-        print("Creating database tables...")
+        current_app.logger.debug("Creating database tables...")
         db.create_all()
     except (IntegrityError, ProgrammingError) as e:
-        print(f"Tables might already exist: {e}")
+        current_app.logger.debug(f"Tables might already exist: {e}")
         db.session.rollback()
 
     try:
-        print(f"Creating admin user: {username}")
+        current_app.logger.debug(f"Creating admin user: {username}")
         admin = User(username=username)
         admin.set_password(password)
         db.session.add(admin)
         db.session.commit()
     except IntegrityError:
-        print("Admin user already exists")
+        current_app.logger.debug("Admin user already exists")
         db.session.rollback()
 
     try:
         if Product.query.count() == 0:
-            print("Creating demo products...")
+            current_app.logger.debug("Creating demo products...")
             products = [
                 Product(
                     name="Duo Asymetrique Foret",
@@ -61,11 +62,11 @@ def initialize_database(username, password):
                 db.session.add(product)
             
             db.session.commit()
-            print(f"Added {len(products)} demo products")
+            current_app.logger.debug(f"Added {len(products)} demo products")
         else:
-            print("Products already exist, skipping...")
+            current_app.logger.debug("Products already exist, skipping...")
     except Exception as e:
-        print(f"Error creating products: {e}")
+        current_app.logger.debug(f"Error creating products: {e}")
         db.session.rollback()
 
-    print("Database initialization complete!")
+    current_app.logger.info("Database initialization complete!")

@@ -20,10 +20,7 @@ def get_secret_or_env(secret_name, env_name=None):
 def create_app():
     app = Flask(__name__)
 
-    # Read secret key
     app.config["SECRET_KEY"] = get_secret_or_env("secret_key", "SECRET_KEY")
-
-    # Read database credentials
     db_user = get_secret_or_env("db_user", "DB_USER")
     db_password = get_secret_or_env("db_password", "DB_PASSWORD")
     db_host = os.environ.get("DB_HOST")
