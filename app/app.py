@@ -28,8 +28,8 @@ def create_app():
     db_password = get_secret_or_env("db_password", "DB_PASSWORD")
     db_host = os.environ.get("DB_HOST")
     db_name = os.environ.get("DB_NAME")
-    web_admin_user = get_secret_or_env("web_admin_user", "DB_USER")
-    web_admin_password = get_secret_or_env("web_admin_password", "DB_USER")
+    web_admin_user = get_secret_or_env("web_admin_user", "WEB_ADMIN_USER")
+    web_admin_password = get_secret_or_env("web_admin_password", "WEB_ADMIN_PASSWORD")
 
     app.config["SQLALCHEMY_DATABASE_URI"] = (
         f"postgresql://{db_user}:{db_password}@{db_host}/{db_name}?sslmode=require"
