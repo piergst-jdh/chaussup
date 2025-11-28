@@ -1,0 +1,59 @@
+name: Deploy to Azure VM
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Build Docker image
+        run: |
+          docker build -t chaussup-web:${{ github.sha }} ./app
+          docker tag chaussup-web:${{ github.sha }} chaussup-web:latest
+      
+      - name: Save Docker image
+        run: |
+          docker save chaussup-web:latest | gzip > chaussup-web.tar.gz
+      
+      - name: Copy image to Azure VM
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.AZURE_VM_HOST }}
+          username: ${{ secrets.AZURE_VM_USER }}
+          key: ${{ secrets.AZURE_VM_SSH_KEY }}
+          source: "chaussup-web.tar.gz"
+          target: "/home/${{ secrets.AZURE_VM_USER }}/"
+      
+      - name: Deploy on Azure VM
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.AZURE_VM_HOST }}
+          username: ${{ secrets.AZURE_VM_USER }}
+          key: ${{ secrets.AZURE_VM_SSH_KEY }}
+          script: |
+            cd /home/${{ secrets.AZURE_VM_USER }}
+            
+            # Load new image
+            gunzip -c chaussup-web.tar.gz | sudo docker load
+            
+            # Remove stack
+            sudo docker stack rm chaussup || true
+            
+            # Wait for stack to be removed
+            sleep 10
+            
+            # Deploy new version
+            sudo docker stack deploy -c chaussup/docker-compose.yml chaussup
+            
+            # Cleanup
+            rm chaussup-web.tar.gz
+            
+            echo "Deployment complete!"
