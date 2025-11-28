@@ -16,7 +16,7 @@ jobs:
       
       - name: Build Docker image
         run: |
-          docker build -t chaussup-web:${{ github.sha }} ./app
+          docker build -t chaussup-web:${{ github.sha }} .app
           docker tag chaussup-web:${{ github.sha }} chaussup-web:latest
       
       - name: Save Docker image
