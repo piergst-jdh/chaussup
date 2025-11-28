@@ -11,6 +11,8 @@ services:
       - db_user
       - db_password
       - secret_key
+      - web_admin_user
+      - web_admin_password
     deploy:
       replicas: 2
       restart_policy:
@@ -23,3 +25,8 @@ secrets:
     external: true
   secret_key:
     external: true
+  web_admin_user:
+    external: true
+  web_admin_password:
+    external: true
+  

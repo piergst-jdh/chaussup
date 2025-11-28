@@ -3,8 +3,11 @@ from models import db, User, Product
 
 def initialize_database(username, password):
     """Drop and recreate all tables with demo data"""
-    print("Dropping all tables...")
-    db.drop_all()
+    try:
+        print("Dropping all tables...")
+        db.drop_all()
+    except Exception as e:
+        print(f"Note: {e} (tables might not exist yet)")
 
     print("Creating database tables...")
     db.create_all()
