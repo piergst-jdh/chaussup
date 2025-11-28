@@ -39,7 +39,7 @@ def create_app():
     db.init_app(app)
 
     with app.app_context():
-        initialize_database()
+        initialize_database(web_admin_user, web_admin_password)
 
     init_routes(app)
 
