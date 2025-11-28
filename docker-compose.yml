@@ -1,6 +1,6 @@
 services:
   chaussup-web:
-    image: chaussup-web:0.1.0
+    image: chaussup-web:latest
     ports:
       - "5000:5000"
     environment:
