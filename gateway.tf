@@ -50,19 +50,11 @@ resource "azurerm_user_assigned_identity" "appgw_identity" {
   location            = data.azurerm_resource_group.rg.location
 }
 
-# Access policy for App Gateway to read certificate from Key Vault
-resource "azurerm_key_vault_access_policy" "appgw_policy" {
-  key_vault_id = data.azurerm_key_vault.kv.id
-  tenant_id    = data.azurerm_client_config.current.tenant_id
-  object_id    = azurerm_user_assigned_identity.appgw_identity.principal_id
-
-  secret_permissions = [
-    "Get",
-  ]
-
-  certificate_permissions = [
-    "Get",
-  ]
+# RBAC role assignment for App Gateway to read secrets from Key Vault
+resource "azurerm_role_assignment" "appgw_kv_secrets" {
+  scope                = data.azurerm_key_vault.kv.id
+  role_definition_name = "Key Vault Secrets User"
+  principal_id         = azurerm_user_assigned_identity.appgw_identity.principal_id
 }
 
 data "azurerm_client_config" "current" {}
@@ -179,5 +171,5 @@ resource "azurerm_application_gateway" "appgw" {
 
   enable_http2 = true
 
-  depends_on = [azurerm_key_vault_access_policy.appgw_policy]
+  depends_on = [azurerm_role_assignment.appgw_kv_secrets]
 }

@@ -39,7 +39,7 @@ def initialize_database(username, password):
                 current_app.logger.debug("Creating demo products...")
                 products = [
                     Product(
-                        name="Duo Asymetrique Foret",
+                        name="Duo Asymétrique Forêt",
                         description="Une chaussette verte sapin, une marron ecorce. L'économie circulaire commence dans votre tiroir !",
                         price=12.90,
                         image_url="/static/images/duo_forest.png",
@@ -51,13 +51,13 @@ def initialize_database(username, password):
                         image_url="/static/images/rebel_pack.jpg",
                     ),
                     Product(
-                        name="Edition Limitee Ocean",
+                        name="Edition Limitée Océan",
                         description="Bleu marine + turquoise recyclé. Sauvez les océans, un pied a la fois.",
                         price=15.90,
                         image_url="/static/images/ocean_limited.jpg",
                     ),
                     Product(
-                        name="Classics Depareilles Noir & Blanc",
+                        name="Classics Depareillés Noir & Blanc",
                         description="L'intemporel revisité. Elegance asymetrique garantie.",
                         price=11.90,
                         image_url="/static/images/black_white.jpg",
