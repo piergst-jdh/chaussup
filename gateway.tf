@@ -169,6 +169,46 @@ resource "azurerm_application_gateway" "appgw" {
     file_upload_limit_mb = 100
   }
 
+  frontend_port {
+    name = "port_8443"
+    port = 8443
+  }
+
+  # Add backend pool for Wazuh
+  backend_address_pool {
+    name         = "wazuh-backend"
+    ip_addresses = ["172.16.3.4"]
+  }
+
+  # Add backend HTTP settings for Wazuh
+  backend_http_settings {
+    name                  = "wazuh-settings"
+    cookie_based_affinity = "Disabled"
+    port                  = 443
+    protocol              = "Https"
+    request_timeout       = 60
+    pick_host_name_from_backend_address = false
+  }
+
+  # Add HTTPS listener on port 8443
+  http_listener {
+    name                           = "wazuh-listener"
+    frontend_ip_configuration_name = "appGwPublicFrontendIpIPv4"
+    frontend_port_name             = "port_8443"
+    protocol                       = "Https"
+    ssl_certificate_name           = "chaussup-duckdns-cert"
+  }
+
+  # Add routing rule for Wazuh
+  request_routing_rule {
+    name                       = "wazuh-rule"
+    rule_type                  = "Basic"
+    priority                   = 300
+    http_listener_name         = "wazuh-listener"
+    backend_address_pool_name  = "wazuh-backend"
+    backend_http_settings_name = "wazuh-settings"
+  }
+
   enable_http2 = true
 
   depends_on = [azurerm_role_assignment.appgw_kv_secrets]
