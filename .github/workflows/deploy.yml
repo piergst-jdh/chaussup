@@ -26,6 +26,7 @@ jobs:
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.AZURE_VM_HOST }}
+          port: ${{ secrets.SSH_PORT }}
           username: ${{ secrets.AZURE_VM_USER }}
           key: ${{ secrets.AZURE_VM_SSH_KEY }}
           source: "chaussup-web.tar.gz, docker-compose.yml"
